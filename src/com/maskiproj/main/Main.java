@@ -3,6 +3,7 @@ package com.maskiproj.main;
 import com.maskiproj.form.Formula;
 import com.maskiproj.form.Kalkulator;
 import com.maskiproj.form.Laporan;
+import com.maskiproj.model.Material;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,10 +19,14 @@ public class Main {
     private final Kalkulator fKalkulator;
     private final Laporan fLaporan;
     
+    private final Material mMaterial;
+    
     private final Connection conn;
 
     public Main() {
-        this.conn = getConnection();
+        conn = getConnection();
+        
+        mMaterial = new Material(conn);
         
         fFormula = new Formula(this);
         fKalkulator = new Kalkulator(this);
@@ -60,9 +65,13 @@ public class Main {
         fLaporan.setVisible(false);
     }
     
+    public Material getModelMaterial() {
+        return mMaterial;
+    }
+    
     private Connection getConnection() {
         String server = "localhost";
-        String database = "tokoanu";
+        String database = "maskiproj";
         String username = "root";
         String password = "";
         String host = "jdbc:mysql://" + server + "/" + database;

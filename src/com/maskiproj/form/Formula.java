@@ -1,6 +1,8 @@
 package com.maskiproj.form;
 
 import com.maskiproj.main.Main;
+import com.maskiproj.model.Material;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author fauzi
@@ -9,6 +11,7 @@ import com.maskiproj.main.Main;
 public class Formula extends javax.swing.JFrame {
 
     private final Main main;
+    private final Material material;
     
     /**
      * Creates new form Formula
@@ -16,8 +19,22 @@ public class Formula extends javax.swing.JFrame {
      */
     public Formula(Main main) {
         this.main = main;
+        this.material = main.getModelMaterial();
         
         initComponents();
+        loadMaterial();
+    }
+    
+    private void loadMaterial() {
+        DefaultTableModel modelMaterial = new DefaultTableModel(null, Material.MATERIAL_COLUMN_TITLE);
+        modelMaterial.setRowCount(0);
+        
+        String[][] listMaterial = material.getListMaterial();
+        for(String[] row : listMaterial) {
+            modelMaterial.addRow(row);
+        }
+        
+        tbFormula.setModel(modelMaterial);
     }
 
     /**
@@ -29,18 +46,18 @@ public class Formula extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        bgModeInput = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        rbBaru = new javax.swing.JRadioButton();
+        rbEdit = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbFormula = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        tfMaterial = new javax.swing.JTextField();
+        tfFormula = new javax.swing.JTextField();
+        btSelesai = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -55,13 +72,15 @@ public class Formula extends javax.swing.JFrame {
 
         jLabel3.setText("Material");
 
-        jRadioButton1.setBackground(new java.awt.Color(153, 153, 0));
-        jRadioButton1.setText("Baru");
+        rbBaru.setBackground(new java.awt.Color(153, 153, 0));
+        bgModeInput.add(rbBaru);
+        rbBaru.setText("Baru");
 
-        jRadioButton2.setBackground(new java.awt.Color(153, 153, 0));
-        jRadioButton2.setText("Edit");
+        rbEdit.setBackground(new java.awt.Color(153, 153, 0));
+        bgModeInput.add(rbEdit);
+        rbEdit.setText("Edit");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbFormula.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -72,15 +91,11 @@ public class Formula extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbFormula);
 
         jLabel4.setText("Formula");
 
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setText("jTextField2");
-
-        jButton1.setText("Selesai");
+        btSelesai.setText("Selesai");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -95,12 +110,12 @@ public class Formula extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jRadioButton1)
+                        .addComponent(rbBaru)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton2))
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField1))
+                        .addComponent(rbEdit))
+                    .addComponent(btSelesai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tfFormula)
+                    .addComponent(tfMaterial))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -113,18 +128,18 @@ public class Formula extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton2))
+                            .addComponent(rbBaru)
+                            .addComponent(rbEdit))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfFormula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1))
+                        .addComponent(btSelesai))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -177,11 +192,12 @@ public class Formula extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
+    private javax.swing.ButtonGroup bgModeInput;
+    private javax.swing.JButton btSelesai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -191,11 +207,11 @@ public class Formula extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JRadioButton rbBaru;
+    private javax.swing.JRadioButton rbEdit;
+    private javax.swing.JTable tbFormula;
+    private javax.swing.JTextField tfFormula;
+    private javax.swing.JTextField tfMaterial;
     // End of variables declaration//GEN-END:variables
 }
