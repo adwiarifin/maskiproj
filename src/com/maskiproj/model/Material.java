@@ -45,19 +45,59 @@ public class Material {
         return result;
     }
 
-    public int getMaterialId(String namaMaterial, String formulaMaterial) {
+    public int getMaterialId(String name, String formula) {
         int result = 0;
         try {
             String sql = "SELECT id FROM material WHERE name = ? AND formula = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, namaMaterial);
-            stmt.setString(2, formulaMaterial);
+            stmt.setString(1, name);
+            stmt.setString(2, formula);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 rs.last();
                 int row = rs.getRow();
                 if (row > 0) {
                     result = rs.getInt("id");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Material.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public int getMaterialId(String name) {
+        int result = 0;
+        try {
+            String sql = "SELECT id FROM material WHERE name = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, name);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                rs.last();
+                int row = rs.getRow();
+                if (row > 0) {
+                    result = rs.getInt("id");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Material.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public int getFormulaById(int id) {
+        int result = 0;
+        try {
+            String sql = "SELECT formula FROM material WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                rs.last();
+                int row = rs.getRow();
+                if (row > 0) {
+                    result = rs.getInt("formula");
                 }
             }
         } catch (SQLException ex) {

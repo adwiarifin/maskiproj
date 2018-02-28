@@ -4,6 +4,7 @@ import com.maskiproj.form.Formula;
 import com.maskiproj.form.Kalkulator;
 import com.maskiproj.form.Laporan;
 import com.maskiproj.model.Material;
+import com.maskiproj.model.Transaksi;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ public class Main {
     private final Laporan fLaporan;
     
     private final Material mMaterial;
+    private final Transaksi mTransaksi;
     
     private final Connection conn;
 
@@ -27,6 +29,7 @@ public class Main {
         conn = getConnection();
         
         mMaterial = new Material(conn);
+        mTransaksi = new Transaksi(conn);
         
         fFormula = new Formula(this);
         fKalkulator = new Kalkulator(this);
@@ -37,7 +40,8 @@ public class Main {
         java.awt.EventQueue.invokeLater(() -> {
             Main main = new Main();
             
-            main.showFormula();
+            //main.showFormula();
+            main.showKalkulator();
         });
     }
     
@@ -67,6 +71,10 @@ public class Main {
     
     public Material getModelMaterial() {
         return mMaterial;
+    }
+    
+    public Transaksi getModelTransaksi() {
+        return mTransaksi;
     }
     
     private Connection getConnection() {

@@ -1,23 +1,71 @@
 package com.maskiproj.form;
 
 import com.maskiproj.main.Main;
+import com.maskiproj.model.Material;
+import com.maskiproj.model.Transaksi;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
- * @author fauzi
- * afnan13579@gmail.com
+ * @author fauzi afnan13579@gmail.com
  */
 public class Kalkulator extends javax.swing.JFrame {
 
     private final Main main;
+    private final Material material;
+    private final Transaksi transaksi;
     
+    private DefaultTableModel modelTransaksi;
+
     /**
      * Creates new form Kalkulator
+     *
      * @param main
      */
     public Kalkulator(Main main) {
         this.main = main;
-        
+        this.material = main.getModelMaterial();
+        this.transaksi = main.getModelTransaksi();
+
         initComponents();
+        
+        String[] transaksiHeader = {"Material", "Panjang", "Lebar", "Harga"};
+        modelTransaksi = new DefaultTableModel(null, transaksiHeader);
+        tbTransaksi.setModel(modelTransaksi);
+
+        loadMaterial();
+    }
+
+    private void loadMaterial() {
+        cbMaterial.removeAllItems();
+        String[][] dataMaterial = material.getListMaterial();
+        for (String[] row : dataMaterial) {
+            cbMaterial.addItem(row[0]);
+        }
+    }
+    
+    private void clearLeftInput() {
+        cbMaterial.setSelectedIndex(0);
+        tfPanjang.setText("");
+        tfLebar.setText("");
+        tfHarga.setText("");
+    }
+    
+    private void clearRightInput() {
+        tfPemesan.setText("");
+        tfJenisPesanan.setText("");
+        modelTransaksi.setRowCount(0);
+        lbGrandTotal.setText("0");
+    }
+    
+    private void calcGrandTotal() {
+        int totalRow = modelTransaksi.getRowCount();
+        double grandTotal = 0;
+        for (int i = 0; i < totalRow; i++) {
+            double harga = Double.parseDouble(modelTransaksi.getValueAt(i, 3).toString());
+            grandTotal += harga;
+        }
+        lbGrandTotal.setText(String.format("%.2f", grandTotal));
     }
 
     /**
@@ -38,26 +86,29 @@ public class Kalkulator extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jComboBox4 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        tfPanjang = new javax.swing.JTextField();
+        tfLebar = new javax.swing.JTextField();
+        tfHarga = new javax.swing.JTextField();
+        cbMaterial = new javax.swing.JComboBox<>();
+        btHitung = new javax.swing.JButton();
+        btDeleteItem = new javax.swing.JButton();
+        btAdd = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
+        tbTransaksi = new javax.swing.JTable();
+        btSelesai = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        tfAddons = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        tfHargaFinal = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        lbGrandTotal = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
+        tfJenisPesanan = new javax.swing.JTextField();
+        tfPemesan = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -111,78 +162,84 @@ public class Kalkulator extends javax.swing.JFrame {
 
         jLabel5.setText("Harga");
 
-        jTextField1.setName("inputpanjang"); // NOI18N
+        tfPanjang.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        tfPanjang.setName("inputpanjang"); // NOI18N
+        tfPanjang.setNextFocusableComponent(tfLebar);
 
-        jTextField2.setName("inputlebar"); // NOI18N
+        tfLebar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        tfLebar.setName("inputlebar"); // NOI18N
+        tfLebar.setNextFocusableComponent(btHitung);
 
-        jTextField3.setName("inputharga"); // NOI18N
+        tfHarga.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        tfHarga.setName("inputharga"); // NOI18N
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbMaterial.setNextFocusableComponent(tfPanjang);
 
-        jButton1.setText("Hitung");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btHitung.setText("Hitung");
+        btHitung.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btHitungActionPerformed(evt);
             }
         });
 
-        jButton2.setForeground(new java.awt.Color(255, 51, 51));
-        jButton2.setText("Hapus Item");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btDeleteItem.setForeground(new java.awt.Color(255, 51, 51));
+        btDeleteItem.setText("Hapus Item");
+        btDeleteItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btDeleteItemActionPerformed(evt);
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton3.setText("+");
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        jButton4.setBackground(new java.awt.Color(102, 102, 102));
-        jButton4.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(0, 102, 0));
-        jButton4.setText("Selesai");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btAdd.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btAdd.setText("+");
+        btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btAddActionPerformed(evt);
+            }
+        });
+
+        jScrollPane1.setViewportView(tbTransaksi);
+
+        btSelesai.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        btSelesai.setForeground(new java.awt.Color(0, 102, 0));
+        btSelesai.setText("Selesai");
+        btSelesai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSelesaiActionPerformed(evt);
             }
         });
 
         jLabel6.setText("Add-ons");
 
+        tfAddons.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
         jLabel7.setText("Harga");
 
-        jTextField5.setText("jTextField5");
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+        tfHargaFinal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        tfHargaFinal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
+                tfHargaFinalActionPerformed(evt);
             }
         });
 
         jLabel8.setText("TOTAL");
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel9.setText("0");
+        lbGrandTotal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lbGrandTotal.setText("0");
 
         jLabel10.setText("Pemesan");
 
         jLabel12.setText("Jenis pesanan");
 
-        jTextField6.setText("jTextField6");
+        tfJenisPesanan.setNextFocusableComponent(btSelesai);
 
-        jTextField7.setText("jTextField7");
+        tfPemesan.setNextFocusableComponent(tfJenisPesanan);
+
+        jLabel13.setText("cm");
+
+        jLabel14.setText("cm");
+
+        jLabel15.setText("Rupiah");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -199,12 +256,18 @@ public class Kalkulator extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING))))
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(tfPanjang, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                    .addComponent(tfLebar, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(tfHarga, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel13)
+                                    .addComponent(jLabel14)
+                                    .addComponent(jLabel15)))))
+                    .addComponent(btHitung, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
@@ -212,14 +275,14 @@ public class Kalkulator extends javax.swing.JFrame {
                                 .addComponent(jLabel6)
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                                    .addComponent(jTextField4))))
+                                    .addComponent(tfHargaFinal, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                    .addComponent(tfAddons))))
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3)))
+                        .addComponent(btAdd)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btDeleteItem, javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -227,14 +290,14 @@ public class Kalkulator extends javax.swing.JFrame {
                             .addComponent(jLabel10))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
-                            .addComponent(jTextField6)))
+                            .addComponent(tfPemesan, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                            .addComponent(tfJenisPesanan)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbGrandTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -245,53 +308,57 @@ public class Kalkulator extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cbMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(tfPanjang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel10)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfPemesan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel12)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(tfJenisPesanan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfLebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(tfHarga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel15)))
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1))
+                        .addComponent(btHitung))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfAddons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton3))
+                            .addComponent(tfHargaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btAdd))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(7, 7, 7)
-                        .addComponent(jButton2)
+                        .addComponent(btDeleteItem)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addGap(9, 9, 9)
-                                .addComponent(jLabel9))
-                            .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING))))
+                                .addComponent(lbGrandTotal))
+                            .addComponent(btSelesai, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
@@ -319,29 +386,38 @@ public class Kalkulator extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-//siapkan angka input
-        float panjang=Float.parseFloat(jTextField1.getText());
-        float lebar=Float.parseFloat(jTextField2.getText());
-        float harga=Float.parseFloat(jTextField3.getText());
-        
-        double luas=0;
-        double luaspcs1=0;
-        double luaspcs2=0;
-        double total1=0;
-        double total2=0;
+    private void btHitungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btHitungActionPerformed
+        // get formula from database
+        int id = material.getMaterialId(cbMaterial.getSelectedItem().toString());
+        int formula = material.getFormulaById(id);
 
-//rumus matematika
-        luas = panjang*lebar;
-        luaspcs1=(luas/100/130);
-        luaspcs2=luas/100/130+(15/100*(luaspcs1));
-        total1=luaspcs1*harga;
-        total2=luaspcs2*harga;
+        // siapkan angka input
+        double panjang = Double.parseDouble(tfPanjang.getText());
+        double lebar = Double.parseDouble(tfLebar.getText());
+//        double harga = Double.parseDouble(tfHarga.getText());
+
+        // perhitungan
+        double luas = panjang * lebar;
+        double harga = luas / formula;
         
-/*tampilkan angka di samping
+        // output to text
+        tfHarga.setText(String.format("%.2f", harga));
+        
+//        double luaspcs2 = 0;
+//        double total1 = 0;
+//        double total2 = 0;
+
+        //rumus matematika
+//        luas = panjang * lebar;
+//        luaspcs1 = (luas / 100 / 130);
+//        luaspcs2 = luas / 100 / 130 + (15 / 100 * (luaspcs1));
+//        total1 = luaspcs1 * harga;
+//        total2 = luaspcs2 * harga;
+
+        /*tampilkan angka di samping
         jLabel19.setText(""+panjang);
         jLabel33.setText(""+panjang);        
         jLabel21.setText(""+lebar);
@@ -354,16 +430,25 @@ public class Kalkulator extends javax.swing.JFrame {
         jLabel41.setText(""+harga);        
         jLabel31.setText(""+total1);
         jLabel43.setText(""+total2);
-*/
-    }//GEN-LAST:event_jButton1ActionPerformed
+         */
+    }//GEN-LAST:event_btHitungActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        jTextField1.requestFocus();
-/*        jLabel19.setText("0");
+    private void btDeleteItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteItemActionPerformed
+        // hapus barang terpilih
+        if (tbTransaksi.getSelectedRow() > -1) {
+            int selectedRow = tbTransaksi.getSelectedRow();
+            modelTransaksi.removeRow(selectedRow);
+        }
+        
+        // hitung total
+        calcGrandTotal();
+        
+        
+//        tfPanjang.setText("");
+//        tfLebar.setText("");
+//        tfHarga.setText("");
+//        tfPanjang.requestFocus();
+        /*        jLabel19.setText("0");
         jLabel33.setText("0");        
         jLabel21.setText("0");
         jLabel35.setText("0");
@@ -375,27 +460,82 @@ public class Kalkulator extends javax.swing.JFrame {
         jLabel41.setText("0");        
         jLabel31.setText("0");
         jLabel43.setText("0"); 
-*/
-    }//GEN-LAST:event_jButton2ActionPerformed
+         */
+    }//GEN-LAST:event_btDeleteItemActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void btSelesaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSelesaiActionPerformed
+        // populate input
+        String pemesan = tfPemesan.getText().trim();
+        String jenisPesanan = tfJenisPesanan.getText().trim();
+        int itemCount = modelTransaksi.getRowCount();
+        double total = Double.parseDouble(lbGrandTotal.getText());
+        
+        // validation
+        if (pemesan.isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Pemesan masih kosong!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (jenisPesanan.isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Jenis pesanan masih kosong!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (itemCount == 0) {
+            JOptionPane.showMessageDialog(rootPane, "Item pesanan masih kosong!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // populate table item
+        String[][] detail = new String[itemCount][4];
+        for (int i = 0; i < itemCount; i++) {
+            detail[i][0] = tbTransaksi.getValueAt(i, 0).toString();
+            detail[i][1] = tbTransaksi.getValueAt(i, 1).toString();
+            detail[i][2] = tbTransaksi.getValueAt(i, 2).toString();
+            detail[i][3] = tbTransaksi.getValueAt(i, 3).toString();
+        }
+        
+        // insert to database
+        if(transaksi.insertTransaksi(pemesan, jenisPesanan, total, detail)){
+            JOptionPane.showMessageDialog(rootPane, "Data transaksi berhasil dimasukkan", "Info", JOptionPane.INFORMATION_MESSAGE);
+            clearRightInput();
+            cbMaterial.requestFocus();
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Data transaksi gagal dimasukkan", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btSelesaiActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+    private void tfHargaFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfHargaFinalActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
+    }//GEN-LAST:event_tfHargaFinalActionPerformed
+
+    private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
+        // add to table
+        String[] rowData = new String[4];
+        rowData[0] = cbMaterial.getSelectedItem().toString();
+        rowData[1] = tfPanjang.getText();
+        rowData[2] = tfLebar.getText();
+        rowData[3] = tfHarga.getText();
+        modelTransaksi.addRow(rowData);
+        
+        // calc total
+        calcGrandTotal();
+        
+        // clear input
+        clearLeftInput();
+    }//GEN-LAST:event_btAddActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox4;
+    private javax.swing.JButton btAdd;
+    private javax.swing.JButton btDeleteItem;
+    private javax.swing.JButton btHitung;
+    private javax.swing.JButton btSelesai;
+    private javax.swing.JComboBox<String> cbMaterial;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -403,7 +543,6 @@ public class Kalkulator extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -411,13 +550,14 @@ public class Kalkulator extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JLabel lbGrandTotal;
+    private javax.swing.JTable tbTransaksi;
+    private javax.swing.JTextField tfAddons;
+    private javax.swing.JTextField tfHarga;
+    private javax.swing.JTextField tfHargaFinal;
+    private javax.swing.JTextField tfJenisPesanan;
+    private javax.swing.JTextField tfLebar;
+    private javax.swing.JTextField tfPanjang;
+    private javax.swing.JTextField tfPemesan;
     // End of variables declaration//GEN-END:variables
 }
