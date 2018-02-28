@@ -2,39 +2,73 @@ package com.maskiproj.form;
 
 import com.maskiproj.main.Main;
 import com.maskiproj.model.Material;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @author fauzi
- * afnan13579@gmail.com
+ * @author fauzi afnan13579@gmail.com
  */
 public class Formula extends javax.swing.JFrame {
 
+    private int id = 0;
     private final Main main;
     private final Material material;
-    
+
     /**
      * Creates new form Formula
+     *
      * @param main
      */
     public Formula(Main main) {
         this.main = main;
         this.material = main.getModelMaterial();
-        
+
         initComponents();
+        initSelectionListener();
+
         loadMaterial();
     }
-    
+
+    private void initSelectionListener() {
+        tbFormula.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                int rowNumber = tbFormula.getSelectedRow();
+                if (rowNumber >= 0) {
+                    String nama = tbFormula.getValueAt(rowNumber, 0).toString();
+                    String formula = tbFormula.getValueAt(rowNumber, 1).toString();
+                    this.id = material.getMaterialId(nama, formula);
+
+                    tfMaterial.setText(nama);
+                    tfFormula.setText(formula);
+                    rbEdit.setSelected(true);
+                }
+            }
+        });
+    }
+
     private void loadMaterial() {
         DefaultTableModel modelMaterial = new DefaultTableModel(null, Material.MATERIAL_COLUMN_TITLE);
         modelMaterial.setRowCount(0);
-        
+
         String[][] listMaterial = material.getListMaterial();
-        for(String[] row : listMaterial) {
+        for (String[] row : listMaterial) {
             modelMaterial.addRow(row);
         }
-        
+
         tbFormula.setModel(modelMaterial);
+    }
+
+    private void clearInput() {
+        tfFormula.setText("");
+        tfMaterial.setText("");
+        bgModeInput.clearSelection();
     }
 
     /**
@@ -80,22 +114,16 @@ public class Formula extends javax.swing.JFrame {
         bgModeInput.add(rbEdit);
         rbEdit.setText("Edit");
 
-        tbFormula.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
         jScrollPane1.setViewportView(tbFormula);
 
         jLabel4.setText("Formula");
 
         btSelesai.setText("Selesai");
+        btSelesai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSelesaiActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -194,6 +222,43 @@ public class Formula extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btSelesaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSelesaiActionPerformed
+        String nama = tfMaterial.getText().trim();
+        int formula = 0;
+        if (tfFormula.getText().contains("*")) {
+            try {
+                ScriptEngineManager mgr = new ScriptEngineManager();
+                ScriptEngine engine = mgr.getEngineByName("JavaScript");
+                String foo = tfFormula.getText().trim();
+                formula = Integer.parseInt(engine.eval(foo).toString());
+            } catch (ScriptException ex) {
+                Logger.getLogger(Formula.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            formula = Integer.parseInt(tfFormula.getText().trim());
+        }
+        //// New, Edit, or no-select
+        if (rbBaru.isSelected()) {
+            if (material.insertMaterial(nama, formula)) {
+                JOptionPane.showMessageDialog(rootPane, "Data Material berhasil ditambahkan", "Info", JOptionPane.INFORMATION_MESSAGE);
+                loadMaterial();
+                clearInput();
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Data Material gagal ditambahkan", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (rbEdit.isSelected()) {
+            if (material.updateMaterial(id, nama, formula)) {
+                JOptionPane.showMessageDialog(rootPane, "Data Material berhasil diubah", "Info", JOptionPane.INFORMATION_MESSAGE);
+                loadMaterial();
+                clearInput();
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Data Material gagal diubah", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Pilih mode terlebih dahulu: [Baru] atau [Edit]");
+        }
+    }//GEN-LAST:event_btSelesaiActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgModeInput;
