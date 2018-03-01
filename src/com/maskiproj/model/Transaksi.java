@@ -47,6 +47,33 @@ public class Transaksi {
         return result;
     }
     
+    public String[][] getListTransaksiForCustomer() {
+        String[][] result = null;
+        try {
+            String sql = "SELECT tanggal, pemesan, jenis_pesanan, ROUND(total*1.15,2) as total FROM transaksi";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                rs.last();
+                int row = rs.getRow();
+                result = new String[row][TRANSAKSI_COLUMN_TITLE.length];
+
+                rs.beforeFirst();
+                int i = 0;
+                while (rs.next()) {
+                    result[i][0] = rs.getString("tanggal");
+                    result[i][1] = rs.getString("pemesan");
+                    result[i][2] = rs.getString("jenis_pesanan");
+                    result[i][3] = rs.getString("total");
+                    i++;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
     public boolean insertTransaksi(String pemesan, String jenisPesanan, double total, String[][] detailTransaksi){
         boolean result = false;
         try {
