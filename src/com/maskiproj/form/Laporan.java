@@ -1,6 +1,8 @@
 package com.maskiproj.form;
 
 import com.maskiproj.main.Main;
+import com.maskiproj.model.Transaksi;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author fauzi
@@ -9,14 +11,22 @@ import com.maskiproj.main.Main;
 public class Laporan extends javax.swing.JFrame {
 
     private final Main main;
+    private final Transaksi transaksi;
     
     /**
      * Creates new form Laporan
      */
     public Laporan(Main main) {
         this.main = main;
+        this.transaksi = main.getModelTransaksi();
         
         initComponents();
+    }
+    
+    public void loadLaporan() {
+        String[][] dataTransaksi = transaksi.getListTransaksi();
+        DefaultTableModel modelTransaksi = new DefaultTableModel(dataTransaksi, Transaksi.TRANSAKSI_COLUMN_TITLE);
+        tbTransaksi.setModel(modelTransaksi);
     }
 
     /**
@@ -31,12 +41,14 @@ public class Laporan extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbTransaksi = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        miKalkulator = new javax.swing.JMenuItem();
+        miFormula = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        miKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,31 +76,65 @@ public class Laporan extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        tbTransaksi.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tbTransaksi);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 182, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Form");
 
-        jMenuItem1.setText("Kalkulator");
-        jMenu1.add(jMenuItem1);
+        miKalkulator.setText("Kalkulator");
+        miKalkulator.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miKalkulatorActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miKalkulator);
 
-        jMenuItem2.setText("Laporan");
-        jMenu1.add(jMenuItem2);
+        miFormula.setText("Formula");
+        miFormula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miFormulaActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miFormula);
 
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Menu");
 
-        jMenuItem3.setText("Exit");
-        jMenu2.add(jMenuItem3);
+        miKeluar.setText("Keluar");
+        miKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miKeluarActionPerformed(evt);
+            }
+        });
+        jMenu2.add(miKeluar);
 
         jMenuBar1.add(jMenu2);
 
@@ -106,22 +152,38 @@ public class Laporan extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 154, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void miKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miKeluarActionPerformed
+        main.exit();
+    }//GEN-LAST:event_miKeluarActionPerformed
+
+    private void miKalkulatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miKalkulatorActionPerformed
+        main.hideLaporan();
+        main.showKalkulator();
+    }//GEN-LAST:event_miKalkulatorActionPerformed
+
+    private void miFormulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFormulaActionPerformed
+        main.hideLaporan();
+        main.showFormula();
+    }//GEN-LAST:event_miFormulaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenuItem miFormula;
+    private javax.swing.JMenuItem miKalkulator;
+    private javax.swing.JMenuItem miKeluar;
+    private javax.swing.JTable tbTransaksi;
     // End of variables declaration//GEN-END:variables
 }

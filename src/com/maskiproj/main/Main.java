@@ -40,12 +40,12 @@ public class Main {
         java.awt.EventQueue.invokeLater(() -> {
             Main main = new Main();
             
-            //main.showFormula();
-            main.showKalkulator();
+            main.showFormula();
         });
     }
     
     public void showFormula() {
+        fFormula.loadMaterial();
         fFormula.setVisible(true);
     }
     
@@ -62,6 +62,7 @@ public class Main {
     }
     
     public void showLaporan() {
+        fLaporan.loadLaporan();
         fLaporan.setVisible(true);
     }
     

@@ -32,8 +32,18 @@ public class Formula extends javax.swing.JFrame {
 
         initComponents();
         initSelectionListener();
+    }
+    
+    public void loadMaterial() {
+        DefaultTableModel modelMaterial = new DefaultTableModel(null, Material.MATERIAL_COLUMN_TITLE);
+        modelMaterial.setRowCount(0);
 
-        loadMaterial();
+        String[][] listMaterial = material.getListMaterial();
+        for (String[] row : listMaterial) {
+            modelMaterial.addRow(row);
+        }
+
+        tbFormula.setModel(modelMaterial);
     }
 
     private void initSelectionListener() {
@@ -51,18 +61,6 @@ public class Formula extends javax.swing.JFrame {
                 }
             }
         });
-    }
-
-    private void loadMaterial() {
-        DefaultTableModel modelMaterial = new DefaultTableModel(null, Material.MATERIAL_COLUMN_TITLE);
-        modelMaterial.setRowCount(0);
-
-        String[][] listMaterial = material.getListMaterial();
-        for (String[] row : listMaterial) {
-            modelMaterial.addRow(row);
-        }
-
-        tbFormula.setModel(modelMaterial);
     }
 
     private void clearInput() {
@@ -96,7 +94,10 @@ public class Formula extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        miKalkulator = new javax.swing.JMenuItem();
+        miLaporan = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        miKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -197,9 +198,35 @@ public class Formula extends javax.swing.JFrame {
         );
 
         jMenu1.setText("Form");
+
+        miKalkulator.setText("Kalkulator");
+        miKalkulator.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miKalkulatorActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miKalkulator);
+
+        miLaporan.setText("Laporan");
+        miLaporan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miLaporanActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miLaporan);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Menu");
+
+        miKeluar.setText("Keluar");
+        miKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miKeluarActionPerformed(evt);
+            }
+        });
+        jMenu2.add(miKeluar);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -260,6 +287,20 @@ public class Formula extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btSelesaiActionPerformed
 
+    private void miKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miKeluarActionPerformed
+        main.exit();
+    }//GEN-LAST:event_miKeluarActionPerformed
+
+    private void miKalkulatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miKalkulatorActionPerformed
+        main.hideFormula();
+        main.showKalkulator();
+    }//GEN-LAST:event_miKalkulatorActionPerformed
+
+    private void miLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLaporanActionPerformed
+        main.hideFormula();
+        main.showLaporan();
+    }//GEN-LAST:event_miLaporanActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgModeInput;
     private javax.swing.JButton btSelesai;
@@ -273,6 +314,9 @@ public class Formula extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenuItem miKalkulator;
+    private javax.swing.JMenuItem miKeluar;
+    private javax.swing.JMenuItem miLaporan;
     private javax.swing.JRadioButton rbBaru;
     private javax.swing.JRadioButton rbEdit;
     private javax.swing.JTable tbFormula;

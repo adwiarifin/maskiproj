@@ -13,10 +13,38 @@ import java.util.logging.Logger;
  */
 public class Transaksi {
     
+    public static final String[] TRANSAKSI_COLUMN_TITLE = {"Tanggal", "Pemesan", "Jenis Pesanan", "Total"};
     private final Connection conn;
 
     public Transaksi(Connection conn) {
         this.conn = conn;
+    }
+    
+    public String[][] getListTransaksi() {
+        String[][] result = null;
+        try {
+            String sql = "SELECT * FROM transaksi";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                rs.last();
+                int row = rs.getRow();
+                result = new String[row][TRANSAKSI_COLUMN_TITLE.length];
+
+                rs.beforeFirst();
+                int i = 0;
+                while (rs.next()) {
+                    result[i][0] = rs.getString("tanggal");
+                    result[i][1] = rs.getString("pemesan");
+                    result[i][2] = rs.getString("jenis_pesanan");
+                    result[i][3] = rs.getString("total");
+                    i++;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
     
     public boolean insertTransaksi(String pemesan, String jenisPesanan, double total, String[][] detailTransaksi){

@@ -111,7 +111,10 @@ public class Kalkulator extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        miFormula = new javax.swing.JMenuItem();
+        miLaporan = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        miKeluar = new javax.swing.JMenuItem();
 
         jLabel11.setText("jLabel11");
 
@@ -363,9 +366,35 @@ public class Kalkulator extends javax.swing.JFrame {
         );
 
         jMenu1.setText("Form");
+
+        miFormula.setText("Formula");
+        miFormula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miFormulaActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miFormula);
+
+        miLaporan.setText("Laporan");
+        miLaporan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miLaporanActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miLaporan);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Menu");
+
+        miKeluar.setText("Keluar");
+        miKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miKeluarActionPerformed(evt);
+            }
+        });
+        jMenu2.add(miKeluar);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -523,6 +552,20 @@ public class Kalkulator extends javax.swing.JFrame {
         clearLeftInput();
     }//GEN-LAST:event_btAddActionPerformed
 
+    private void miKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miKeluarActionPerformed
+        main.exit();
+    }//GEN-LAST:event_miKeluarActionPerformed
+
+    private void miFormulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miFormulaActionPerformed
+        main.hideKalkulator();
+        main.showFormula();
+    }//GEN-LAST:event_miFormulaActionPerformed
+
+    private void miLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLaporanActionPerformed
+        main.hideKalkulator();
+        main.showLaporan();
+    }//GEN-LAST:event_miLaporanActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
     private javax.swing.JButton btDeleteItem;
@@ -551,6 +594,9 @@ public class Kalkulator extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbGrandTotal;
+    private javax.swing.JMenuItem miFormula;
+    private javax.swing.JMenuItem miKeluar;
+    private javax.swing.JMenuItem miLaporan;
     private javax.swing.JTable tbTransaksi;
     private javax.swing.JTextField tfAddons;
     private javax.swing.JTextField tfHarga;
