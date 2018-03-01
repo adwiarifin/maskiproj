@@ -29,7 +29,7 @@ public class Kalkulator extends javax.swing.JFrame {
 
         initComponents();
         
-        String[] transaksiHeader = {"Material", "Panjang", "Lebar", "Harga"};
+        String[] transaksiHeader = {"Material", "Luas", "Hasil", "Subtotal"};
         modelTransaksi = new DefaultTableModel(null, transaksiHeader);
         tbTransaksi.setModel(modelTransaksi);
 
@@ -99,7 +99,7 @@ public class Kalkulator extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         tfAddons = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        tfHargaFinal = new javax.swing.JTextField();
+        tfHargaTambahan = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         lbGrandTotal = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -171,10 +171,11 @@ public class Kalkulator extends javax.swing.JFrame {
 
         tfLebar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         tfLebar.setName("inputlebar"); // NOI18N
-        tfLebar.setNextFocusableComponent(btHitung);
+        tfLebar.setNextFocusableComponent(tfHarga);
 
         tfHarga.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         tfHarga.setName("inputharga"); // NOI18N
+        tfHarga.setNextFocusableComponent(btHitung);
 
         cbMaterial.setNextFocusableComponent(tfPanjang);
 
@@ -215,13 +216,15 @@ public class Kalkulator extends javax.swing.JFrame {
         jLabel6.setText("Add-ons");
 
         tfAddons.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        tfAddons.setNextFocusableComponent(tfHargaTambahan);
 
         jLabel7.setText("Harga");
 
-        tfHargaFinal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        tfHargaFinal.addActionListener(new java.awt.event.ActionListener() {
+        tfHargaTambahan.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        tfHargaTambahan.setNextFocusableComponent(btAdd);
+        tfHargaTambahan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfHargaFinalActionPerformed(evt);
+                tfHargaTambahanActionPerformed(evt);
             }
         });
 
@@ -238,9 +241,9 @@ public class Kalkulator extends javax.swing.JFrame {
 
         tfPemesan.setNextFocusableComponent(tfJenisPesanan);
 
-        jLabel13.setText("cm");
+        jLabel13.setText("m");
 
-        jLabel14.setText("cm");
+        jLabel14.setText("m");
 
         jLabel15.setText("Rupiah");
 
@@ -278,7 +281,7 @@ public class Kalkulator extends javax.swing.JFrame {
                                 .addComponent(jLabel6)
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(tfHargaFinal, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                    .addComponent(tfHargaTambahan, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
                                     .addComponent(tfAddons))))
                         .addGap(18, 18, 18)
                         .addComponent(btAdd)))
@@ -349,7 +352,7 @@ public class Kalkulator extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
-                            .addComponent(tfHargaFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tfHargaTambahan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btAdd))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
@@ -426,40 +429,26 @@ public class Kalkulator extends javax.swing.JFrame {
         // siapkan angka input
         double panjang = Double.parseDouble(tfPanjang.getText());
         double lebar = Double.parseDouble(tfLebar.getText());
-//        double harga = Double.parseDouble(tfHarga.getText());
+        double harga = Double.parseDouble(tfHarga.getText());
 
         // perhitungan
         double luas = panjang * lebar;
-        double harga = luas / formula;
+        double hasil = luas / formula;
+        double subtotal = hasil * harga;
         
-        // output to text
-        tfHarga.setText(String.format("%.2f", harga));
+        // add to table
+        String[] rowData = new String[4];
+        rowData[0] = cbMaterial.getSelectedItem().toString();
+        rowData[1] = String.format("%.0f", luas);
+        rowData[2] = String.format("%.4f", hasil);
+        rowData[3] = String.format("%.2f", subtotal);
+        modelTransaksi.addRow(rowData);
         
-//        double luaspcs2 = 0;
-//        double total1 = 0;
-//        double total2 = 0;
-
-        //rumus matematika
-//        luas = panjang * lebar;
-//        luaspcs1 = (luas / 100 / 130);
-//        luaspcs2 = luas / 100 / 130 + (15 / 100 * (luaspcs1));
-//        total1 = luaspcs1 * harga;
-//        total2 = luaspcs2 * harga;
-
-        /*tampilkan angka di samping
-        jLabel19.setText(""+panjang);
-        jLabel33.setText(""+panjang);        
-        jLabel21.setText(""+lebar);
-        jLabel35.setText(""+lebar);        
-        jLabel23.setText(""+luas);
-        jLabel37.setText(""+luas);        
-        jLabel26.setText(""+luaspcs2);        
-        jLabel39.setText(""+luaspcs1);        
-        jLabel29.setText(""+harga);
-        jLabel41.setText(""+harga);        
-        jLabel31.setText(""+total1);
-        jLabel43.setText(""+total2);
-         */
+        // calc total
+        calcGrandTotal();
+        
+        // clear input
+        clearLeftInput();
     }//GEN-LAST:event_btHitungActionPerformed
 
     private void btDeleteItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteItemActionPerformed
@@ -471,25 +460,6 @@ public class Kalkulator extends javax.swing.JFrame {
         
         // hitung total
         calcGrandTotal();
-        
-        
-//        tfPanjang.setText("");
-//        tfLebar.setText("");
-//        tfHarga.setText("");
-//        tfPanjang.requestFocus();
-        /*        jLabel19.setText("0");
-        jLabel33.setText("0");        
-        jLabel21.setText("0");
-        jLabel35.setText("0");
-        jLabel23.setText("0");
-        jLabel37.setText("0");        
-        jLabel26.setText("0");
-        jLabel39.setText("0");        
-        jLabel29.setText("0");
-        jLabel41.setText("0");        
-        jLabel31.setText("0");
-        jLabel43.setText("0"); 
-         */
     }//GEN-LAST:event_btDeleteItemActionPerformed
 
     private void btSelesaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSelesaiActionPerformed
@@ -532,17 +502,17 @@ public class Kalkulator extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btSelesaiActionPerformed
 
-    private void tfHargaFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfHargaFinalActionPerformed
+    private void tfHargaTambahanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfHargaTambahanActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tfHargaFinalActionPerformed
+    }//GEN-LAST:event_tfHargaTambahanActionPerformed
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         // add to table
         String[] rowData = new String[4];
-        rowData[0] = cbMaterial.getSelectedItem().toString();
-        rowData[1] = tfPanjang.getText();
-        rowData[2] = tfLebar.getText();
-        rowData[3] = tfHarga.getText();
+        rowData[0] = "Addons: " + tfAddons.getText().trim();
+        rowData[1] = "0";
+        rowData[2] = "0";
+        rowData[3] = tfHargaTambahan.getText().trim();
         modelTransaksi.addRow(rowData);
         
         // calc total
@@ -600,7 +570,7 @@ public class Kalkulator extends javax.swing.JFrame {
     private javax.swing.JTable tbTransaksi;
     private javax.swing.JTextField tfAddons;
     private javax.swing.JTextField tfHarga;
-    private javax.swing.JTextField tfHargaFinal;
+    private javax.swing.JTextField tfHargaTambahan;
     private javax.swing.JTextField tfJenisPesanan;
     private javax.swing.JTextField tfLebar;
     private javax.swing.JTextField tfPanjang;

@@ -71,18 +71,18 @@ public class Transaksi {
             // insert to detail_transaksi
             for (String[] column : detailTransaksi) {
                 String material = column[0];
-                double panjang = Double.parseDouble(column[1]);
-                double lebar = Double.parseDouble(column[2]);
-                double harga = Double.parseDouble(column[3]);
+                double luas = Double.parseDouble(column[1]);
+                double hasil = Double.parseDouble(column[2]);
+                double subtotal = Double.parseDouble(column[3]);
                 
-                String sqlDetailTransaksi = "INSERT INTO detail_transaksi(id_transaksi, material, panjang, lebar, harga) VALUES(?, ?, ?, ?, ?)";
+                String sqlDetailTransaksi = "INSERT INTO detail_transaksi(id_transaksi, material, luas, hasil, total) VALUES(?, ?, ?, ?, ?)";
                 PreparedStatement stmtDetailTransaksi = conn.prepareStatement(sqlDetailTransaksi);
                 
                 stmtDetailTransaksi.setInt(1, transaksiId);
                 stmtDetailTransaksi.setString(2, material);
-                stmtDetailTransaksi.setDouble(3, panjang);
-                stmtDetailTransaksi.setDouble(4, lebar);
-                stmtDetailTransaksi.setDouble(5, harga);
+                stmtDetailTransaksi.setDouble(3, luas);
+                stmtDetailTransaksi.setDouble(4, hasil);
+                stmtDetailTransaksi.setDouble(5, subtotal);
                 
                 stmtDetailTransaksi.executeUpdate();
             }
