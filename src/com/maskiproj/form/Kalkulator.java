@@ -3,6 +3,10 @@ package com.maskiproj.form;
 import com.maskiproj.main.Main;
 import com.maskiproj.model.Material;
 import com.maskiproj.model.Transaksi;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -14,8 +18,9 @@ public class Kalkulator extends javax.swing.JFrame {
     private final Main main;
     private final Material material;
     private final Transaksi transaksi;
-    
-    private DefaultTableModel modelTransaksi;
+
+    private final DefaultTableModel modelTransaksi;
+    private final NumberFormat format;
 
     /**
      * Creates new form Kalkulator
@@ -28,7 +33,8 @@ public class Kalkulator extends javax.swing.JFrame {
         this.transaksi = main.getModelTransaksi();
 
         initComponents();
-        
+
+        format = NumberFormat.getInstance();
         String[] transaksiHeader = {"Material", "Luas", "Hasil", "Subtotal"};
         modelTransaksi = new DefaultTableModel(null, transaksiHeader);
         tbTransaksi.setModel(modelTransaksi);
@@ -43,29 +49,33 @@ public class Kalkulator extends javax.swing.JFrame {
             cbMaterial.addItem(row[0]);
         }
     }
-    
+
     private void clearLeftInput() {
         cbMaterial.setSelectedIndex(0);
         tfPanjang.setText("");
         tfLebar.setText("");
         tfHarga.setText("");
     }
-    
+
     private void clearRightInput() {
         tfPemesan.setText("");
         tfJenisPesanan.setText("");
         modelTransaksi.setRowCount(0);
         lbGrandTotal.setText("0");
     }
-    
+
     private void calcGrandTotal() {
-        int totalRow = modelTransaksi.getRowCount();
-        double grandTotal = 0;
-        for (int i = 0; i < totalRow; i++) {
-            double harga = Double.parseDouble(modelTransaksi.getValueAt(i, 3).toString());
-            grandTotal += harga;
+        try {
+            int totalRow = modelTransaksi.getRowCount();
+            double grandTotal = 0;
+            for (int i = 0; i < totalRow; i++) {
+                String sTotal = modelTransaksi.getValueAt(i, 3).toString();
+                grandTotal += format.parse(sTotal).doubleValue();
+            }
+            lbGrandTotal.setText(String.format("%.2f", grandTotal));
+        } catch (ParseException ex) {
+            Logger.getLogger(Kalkulator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        lbGrandTotal.setText(String.format("%.2f", grandTotal));
     }
 
     /**
@@ -362,7 +372,7 @@ public class Kalkulator extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
-                                .addGap(9, 9, 9)
+                                .addGap(15, 15, 15)
                                 .addComponent(lbGrandTotal))
                             .addComponent(btSelesai, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
@@ -435,7 +445,7 @@ public class Kalkulator extends javax.swing.JFrame {
         double luas = panjang * lebar;
         double hasil = luas / formula;
         double subtotal = hasil * harga;
-        
+
         // add to table
         String[] rowData = new String[4];
         rowData[0] = cbMaterial.getSelectedItem().toString();
@@ -443,10 +453,10 @@ public class Kalkulator extends javax.swing.JFrame {
         rowData[2] = String.format("%.4f", hasil);
         rowData[3] = String.format("%.2f", subtotal);
         modelTransaksi.addRow(rowData);
-        
+
         // calc total
         calcGrandTotal();
-        
+
         // clear input
         clearLeftInput();
     }//GEN-LAST:event_btHitungActionPerformed
@@ -457,7 +467,7 @@ public class Kalkulator extends javax.swing.JFrame {
             int selectedRow = tbTransaksi.getSelectedRow();
             modelTransaksi.removeRow(selectedRow);
         }
-        
+
         // hitung total
         calcGrandTotal();
     }//GEN-LAST:event_btDeleteItemActionPerformed
@@ -467,8 +477,13 @@ public class Kalkulator extends javax.swing.JFrame {
         String pemesan = tfPemesan.getText().trim();
         String jenisPesanan = tfJenisPesanan.getText().trim();
         int itemCount = modelTransaksi.getRowCount();
-        double total = Double.parseDouble(lbGrandTotal.getText());
-        
+        double total = 0;
+        try {
+            total = format.parse(lbGrandTotal.getText()).doubleValue();
+        } catch (ParseException ex) {
+            Logger.getLogger(Kalkulator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         // validation
         if (pemesan.isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Pemesan masih kosong!", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -482,7 +497,7 @@ public class Kalkulator extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "Item pesanan masih kosong!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         // populate table item
         String[][] detail = new String[itemCount][4];
         for (int i = 0; i < itemCount; i++) {
@@ -491,9 +506,9 @@ public class Kalkulator extends javax.swing.JFrame {
             detail[i][2] = tbTransaksi.getValueAt(i, 2).toString();
             detail[i][3] = tbTransaksi.getValueAt(i, 3).toString();
         }
-        
+
         // insert to database
-        if(transaksi.insertTransaksi(pemesan, jenisPesanan, total, detail)){
+        if (transaksi.insertTransaksi(pemesan, jenisPesanan, total, detail)) {
             JOptionPane.showMessageDialog(rootPane, "Data transaksi berhasil dimasukkan", "Info", JOptionPane.INFORMATION_MESSAGE);
             clearRightInput();
             cbMaterial.requestFocus();
@@ -514,10 +529,10 @@ public class Kalkulator extends javax.swing.JFrame {
         rowData[2] = "0";
         rowData[3] = tfHargaTambahan.getText().trim();
         modelTransaksi.addRow(rowData);
-        
+
         // calc total
         calcGrandTotal();
-        
+
         // clear input
         clearLeftInput();
     }//GEN-LAST:event_btAddActionPerformed
