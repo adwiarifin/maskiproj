@@ -35,8 +35,7 @@ public class Kalkulator extends javax.swing.JFrame {
         initComponents();
 
         format = NumberFormat.getInstance();
-        String[] transaksiHeader = {"Material", "Luas", "Hasil", "Subtotal"};
-        modelTransaksi = new DefaultTableModel(null, transaksiHeader);
+        modelTransaksi = new DefaultTableModel(null, Transaksi.TRANSAKSI_DETAIL_COLUMN_TITLE);
         tbTransaksi.setModel(modelTransaksi);
 
         loadMaterial();

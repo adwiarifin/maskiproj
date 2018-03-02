@@ -2,6 +2,9 @@ package com.maskiproj.form;
 
 import com.maskiproj.main.Main;
 import com.maskiproj.model.Transaksi;
+import javax.swing.JLabel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -13,6 +16,9 @@ public class Laporan extends javax.swing.JFrame {
     private final Main main;
     private final Transaksi transaksi;
     
+    DefaultTableCellRenderer rightRenderer;
+    DefaultTableCellRenderer centerRenderer;
+    
     /**
      * Creates new form Laporan
      */
@@ -21,16 +27,67 @@ public class Laporan extends javax.swing.JFrame {
         this.transaksi = main.getModelTransaksi();
         
         initComponents();
+        initSelectionListener();
+        
+        rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        
+        centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
     }
     
     public void loadLaporan() {
-        String[][] dataSupplier = transaksi.getListTransaksi();
+        String[][] dataSupplier = transaksi.getListTransaksiForSupplier();
         DefaultTableModel modelSupplier = new DefaultTableModel(dataSupplier, Transaksi.TRANSAKSI_COLUMN_TITLE);
         tbSupplier.setModel(modelSupplier);
+        tbSupplier.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tbSupplier.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         
         String[][] dataCustomer = transaksi.getListTransaksiForCustomer();
         DefaultTableModel modelCustomer = new DefaultTableModel(dataCustomer, Transaksi.TRANSAKSI_COLUMN_TITLE);
         tbCustomer.setModel(modelCustomer);
+        tbCustomer.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tbCustomer.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+    }
+    
+    private void loadSupplierDetail(String id) {
+        String[][] data = transaksi.getListDetailTransaksiForSupplier(id);
+        DefaultTableModel model = new DefaultTableModel(data, Transaksi.TRANSAKSI_DETAIL_COLUMN_TITLE);
+        tbSupplierDetail.setModel(model);
+        tbSupplierDetail.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
+        tbSupplierDetail.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tbSupplierDetail.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+    }
+    
+    private void loadCustomerDetail(String id) {
+        String[][] data = transaksi.getListDetailTransaksiForCustomer(id);
+        DefaultTableModel model = new DefaultTableModel(data, Transaksi.TRANSAKSI_DETAIL_COLUMN_TITLE);
+        tbCustomerDetail.setModel(model);
+        tbCustomerDetail.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
+        tbCustomerDetail.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tbCustomerDetail.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+    }
+    
+    private void initSelectionListener() {
+        tbSupplier.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                int rowNumber = tbSupplier.getSelectedRow();
+                if (rowNumber >= 0) {
+                    String id = tbSupplier.getValueAt(rowNumber, 0).toString();
+                    loadSupplierDetail(id);
+                }
+            }
+        });
+        
+        tbCustomer.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                int rowNumber = tbCustomer.getSelectedRow();
+                if (rowNumber >= 0) {
+                    String id = tbCustomer.getValueAt(rowNumber, 0).toString();
+                    loadCustomerDetail(id);
+                }
+            }
+        });
     }
 
     /**
@@ -46,11 +103,15 @@ public class Laporan extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tbSupplierDetail = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbSupplier = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbCustomer = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tbCustomerDetail = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         miKalkulator = new javax.swing.JMenuItem();
@@ -84,17 +145,8 @@ public class Laporan extends javax.swing.JFrame {
                 .addContainerGap(76, Short.MAX_VALUE))
         );
 
-        tbSupplier.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        jScrollPane3.setViewportView(tbSupplierDetail);
+
         jScrollPane1.setViewportView(tbSupplier);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -103,31 +155,26 @@ public class Laporan extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Supplier", jPanel2);
 
-        tbCustomer.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
         jScrollPane2.setViewportView(tbCustomer);
+
+        jScrollPane4.setViewportView(tbCustomerDetail);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -135,15 +182,19 @@ public class Laporan extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Customer", jPanel3);
@@ -194,7 +245,7 @@ public class Laporan extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -225,11 +276,15 @@ public class Laporan extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenuItem miFormula;
     private javax.swing.JMenuItem miKalkulator;
     private javax.swing.JMenuItem miKeluar;
     private javax.swing.JTable tbCustomer;
+    private javax.swing.JTable tbCustomerDetail;
     private javax.swing.JTable tbSupplier;
+    private javax.swing.JTable tbSupplierDetail;
     // End of variables declaration//GEN-END:variables
 }

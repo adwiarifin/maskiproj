@@ -15,17 +15,18 @@ import java.util.logging.Logger;
  */
 public class Transaksi {
 
-    public static final String[] TRANSAKSI_COLUMN_TITLE = {"Tanggal", "Pemesan", "Jenis Pesanan", "Total"};
+    public static final String[] TRANSAKSI_COLUMN_TITLE = {"ID", "Tanggal", "Pemesan", "Jenis Pesanan", "Total"};
+    public static final String[] TRANSAKSI_DETAIL_COLUMN_TITLE = {"Material", "Luas", "Hasil", "Subtotal"};
     private final Connection conn;
 
     public Transaksi(Connection conn) {
         this.conn = conn;
     }
 
-    public String[][] getListTransaksi() {
+    public String[][] getListTransaksiForSupplier() {
         String[][] result = null;
         try {
-            String sql = "SELECT * FROM transaksi";
+            String sql = "SELECT id, tanggal, pemesan, jenis_pesanan, total FROM transaksi ORDER BY id DESC";
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -36,10 +37,11 @@ public class Transaksi {
                 rs.beforeFirst();
                 int i = 0;
                 while (rs.next()) {
-                    result[i][0] = rs.getString("tanggal");
-                    result[i][1] = rs.getString("pemesan");
-                    result[i][2] = rs.getString("jenis_pesanan");
-                    result[i][3] = rs.getString("total");
+                    result[i][0] = rs.getString("id");
+                    result[i][1] = rs.getString("tanggal");
+                    result[i][2] = rs.getString("pemesan");
+                    result[i][3] = rs.getString("jenis_pesanan");
+                    result[i][4] = rs.getString("total");
                     i++;
                 }
             }
@@ -52,7 +54,7 @@ public class Transaksi {
     public String[][] getListTransaksiForCustomer() {
         String[][] result = null;
         try {
-            String sql = "SELECT tanggal, pemesan, jenis_pesanan, ROUND(total*1.15,2) as total FROM transaksi";
+            String sql = "SELECT id, tanggal, pemesan, jenis_pesanan, ROUND(total*1.15,2) as total FROM transaksi  ORDER BY id DESC";
             PreparedStatement stmt = conn.prepareStatement(sql);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -63,9 +65,66 @@ public class Transaksi {
                 rs.beforeFirst();
                 int i = 0;
                 while (rs.next()) {
-                    result[i][0] = rs.getString("tanggal");
-                    result[i][1] = rs.getString("pemesan");
-                    result[i][2] = rs.getString("jenis_pesanan");
+                    result[i][0] = rs.getString("id");
+                    result[i][1] = rs.getString("tanggal");
+                    result[i][2] = rs.getString("pemesan");
+                    result[i][3] = rs.getString("jenis_pesanan");
+                    result[i][4] = rs.getString("total");
+                    i++;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public String[][] getListDetailTransaksiForSupplier(String id) {
+        String[][] result = null;
+        try {
+            String sql = "SELECT material, luas, hasil, total FROM detail_transaksi WHERE id_transaksi = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                rs.last();
+                int row = rs.getRow();
+                result = new String[row][TRANSAKSI_DETAIL_COLUMN_TITLE.length];
+
+                rs.beforeFirst();
+                int i = 0;
+                while (rs.next()) {
+                    result[i][0] = rs.getString("material");
+                    result[i][1] = rs.getString("luas");
+                    result[i][2] = rs.getString("hasil");
+                    result[i][3] = rs.getString("total");
+                    i++;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Transaksi.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public String[][] getListDetailTransaksiForCustomer(String id) {
+        String[][] result = null;
+        try {
+            String sql = "SELECT material, luas, ROUND(hasil*1.15,4) as hasil, ROUND(total*1.15,2) as total FROM detail_transaksi WHERE id_transaksi = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                rs.last();
+                int row = rs.getRow();
+                result = new String[row][TRANSAKSI_DETAIL_COLUMN_TITLE.length];
+
+                rs.beforeFirst();
+                int i = 0;
+                while (rs.next()) {
+                    result[i][0] = rs.getString("material");
+                    result[i][1] = rs.getString("luas");
+                    result[i][2] = rs.getString("hasil");
                     result[i][3] = rs.getString("total");
                     i++;
                 }
