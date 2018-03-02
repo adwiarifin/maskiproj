@@ -5,22 +5,27 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+USE `maskiproj`;
+
 DROP TABLE IF EXISTS `detail_transaksi`;
 CREATE TABLE `detail_transaksi` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_transaksi` int(10) unsigned NOT NULL,
   `material` varchar(50) NOT NULL,
-  `panjang` double NOT NULL,
-  `lebar` double NOT NULL,
-  `harga` double NOT NULL,
+  `luas` double NOT NULL,
+  `hasil` double NOT NULL,
+  `total` double NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_transaksi` (`id_transaksi`),
   CONSTRAINT `detail_transaksi_ibfk_1` FOREIGN KEY (`id_transaksi`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `detail_transaksi` (`id`, `id_transaksi`, `material`, `panjang`, `lebar`, `harga`) VALUES
+INSERT INTO `detail_transaksi` (`id`, `id_transaksi`, `material`, `luas`, `hasil`, `total`) VALUES
 (1,	1,	'Busa 2 mm',	100,	100,	0.67),
-(2,	1,	'Suede',	100,	100,	0.77);
+(2,	1,	'Suede',	100,	100,	0.77),
+(3,	2,	'Enceng Polos 35',	100,	0.029,	285.71),
+(4,	2,	'Beludru',	40,	0.003,	30.77),
+(5,	2,	'Addons: Emboss',	0,	0,	20000);
 
 DROP TABLE IF EXISTS `material`;
 CREATE TABLE `material` (
@@ -64,6 +69,7 @@ CREATE TABLE `transaksi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `transaksi` (`id`, `tanggal`, `pemesan`, `jenis_pesanan`, `total`) VALUES
-(1,	'2018-03-01 06:42:46',	'Adwi Arifin',	'Pesanan Biasa',	1.44);
+(1,	'2018-03-01 06:42:46',	'Adwi Arifin',	'Pesanan Biasa',	1.44),
+(2,	'2018-03-01 10:55:38',	'Sarimin',	'Pasar',	20316.48);
 
--- 2018-02-28 23:47:19
+-- 2018-03-01 07:02:35
